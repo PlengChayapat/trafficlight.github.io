@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ฝึกจำสี — แดง เหลือง เขียว</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c1b19;
+    --ink-soft:#585550;
+    --paper:#f6f4ef;
+    --paper-panel:#ffffff;
+    --line:#ddd8cc;
+    --red:#e2001a;
+    --red-dark:#7a0c2e;
+    --red-brick:#b23a2e;
+    --red-verm:#e4572e;
+    --yellow:#ffd400;
+    --yellow-gold:#ffc72c;
+    --yellow-mustard:#c9a227;
+    --yellow-pale:#f5e6a8;
+    --green:#009444;
+    --green-dark:#1b5e3a;
+    --green-leaf:#4caf50;
+    --green-olive:#6b8e23;
+    --steel:#2b2f36;
+    --ok:#1b7a3d;
+    --bad:#b3261e;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, #00000009 1px, transparent 0);
+    background-size: 22px 22px;
+    color:var(--ink);
+    font-family:'Sarabun',sans-serif;
+    line-height:1.6;
+    padding-bottom:60px;
+  }
+  h1,h2,h3,.display{font-family:'Kanit',sans-serif;}
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px;}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding:38px 20px 30px;
+    border-bottom:1px solid var(--line);
+    background:var(--paper-panel);
+  }
+  .hero-inner{max-width:920px;margin:0 auto;display:flex;gap:28px;align-items:center;flex-wrap:wrap;}
+  .hero-text{flex:1 1 320px;}
+  .eyebrow{
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:13px;letter-spacing:.14em;
+    color:var(--ink-soft);text-transform:uppercase;margin:0 0 8px;
+  }
+  h1.title{font-size:clamp(28px,4.5vw,40px);font-weight:800;margin:0 0 10px;letter-spacing:-.01em;}
+  .subtitle{color:var(--ink-soft);font-size:16px;max-width:46ch;margin:0;}
+
+  /* traffic light signature */
+  .signal{
+    background:var(--steel);
+    border-radius:16px;
+    padding:14px 12px;
+    width:74px;
+    display:flex;flex-direction:column;gap:12px;align-items:center;
+    box-shadow:0 10px 24px -8px #00000055, inset 0 0 0 1px #ffffff14;
+    flex-shrink:0;
+  }
+  .signal .lamp{
+    width:46px;height:46px;border-radius:50%;
+    background:#00000055;
+    box-shadow:inset 0 2px 4px #00000070;
+    transition:box-shadow .4s ease, background-color .4s ease;
+  }
+  .signal .lamp.on-red{background:var(--red);box-shadow:0 0 22px 4px var(--red), inset 0 -3px 6px #00000030;}
+  .signal .lamp.on-yellow{background:var(--yellow);box-shadow:0 0 22px 4px var(--yellow), inset 0 -3px 6px #00000030;}
+  .signal .lamp.on-green{background:var(--green);box-shadow:0 0 22px 4px var(--green), inset 0 -3px 6px #00000030;}
+
+  /* ---------- NAV / CHECKPOINTS ---------- */
+  nav.stages{
+    max-width:920px;margin:0 auto;padding:22px 20px 0;
+    display:flex;gap:10px;flex-wrap:wrap;
+  }
+  .stage-btn{
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:14.5px;
+    border:1.5px solid var(--line);background:var(--paper-panel);color:var(--ink-soft);
+    padding:10px 16px;border-radius:999px;cursor:pointer;
+    display:flex;align-items:center;gap:8px;transition:all .15s ease;
+  }
+  .stage-btn .num{
+    width:20px;height:20px;border-radius:50%;background:var(--line);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;
+  }
+  .stage-btn.active{border-color:var(--ink);color:var(--ink);background:#fff;}
+  .stage-btn.active .num{background:var(--ink);}
+  .stage-btn.done .num{background:var(--ok);}
+
+  section.stage{display:none;padding:26px 20px 10px;}
+  section.stage.active{display:block;}
+
+  .stage-head{margin-bottom:18px;}
+  .stage-head h2{font-size:24px;margin:0 0 6px;}
+  .stage-head p{color:var(--ink-soft);margin:0;font-size:15px;}
+
+  /* ---------- CARDS: Level 1 ---------- */
+  .basic-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 28px;}
+  @media (max-width:640px){.basic-grid{grid-template-columns:1fr;}}
+  .basic-card{
+    background:var(--paper-panel);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .basic-card .swatch{height:120px;}
+  .basic-card .info{padding:14px 16px;}
+  .basic-card .name{font-family:'Kanit',sans-serif;font-weight:700;font-size:20px;margin:0 0 2px;}
+  .basic-card .en{color:var(--ink-soft);font-size:13px;margin:0 0 10px;}
+  .speak-btn{
+    font-family:'Sarabun',sans-serif;font-size:13.5px;font-weight:600;
+    border:1px solid var(--line);background:var(--paper);color:var(--ink);
+    padding:7px 12px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  }
+  .speak-btn:hover{border-color:var(--ink);}
+
+  /* ---------- TONE GRID: Level 2 ---------- */
+  .tone-group{margin-bottom:22px;}
+  .tone-group h3{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px;}
+  .tone-group h3 .dot{width:13px;height:13px;border-radius:50%;display:inline-block;}
+  .tone-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  @media (max-width:640px){.tone-grid{grid-template-columns:repeat(2,1fr);}}
+  .tone-card{
+    background:var(--paper-panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+  }
+  .tone-card .swatch{height:64px;}
+  .tone-card .label{padding:9px 10px;font-size:13.5px;font-weight:600;font-family:'Kanit',sans-serif;}
+
+  /* ---------- QUIZ PANEL (shared) ---------- */
+  .quiz-panel{
+    background:var(--paper-panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px;margin-top:8px;
+  }
+  .quiz-panel h3{margin:0 0 4px;font-size:18px;}
+  .quiz-meta{display:flex;justify-content:space-between;align-items:center;color:var(--ink-soft);font-size:13.5px;margin-bottom:16px;}
+  .quiz-stage{display:flex;flex-direction:column;align-items:center;gap:18px;padding:10px 0 6px;}
+  .quiz-swatch{
+    width:100%;max-width:280px;height:150px;border-radius:14px;
+    box-shadow:0 8px 20px -8px #00000030, inset 0 0 0 1px #00000010;
+  }
+  .choices{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;width:100%;}
+  .choice-btn{
+    font-family:'Kanit',sans-serif;font-weight:600;font-size:16px;
+    border:2px solid var(--line);background:#fff;color:var(--ink);
+    padding:12px 20px;border-radius:10px;cursor:pointer;min-width:110px;
+    transition:all .12s ease;
+  }
+  .choice-btn:hover{border-color:var(--ink);transform:translateY(-1px);}
+  .choice-btn.correct{border-color:var(--ok);background:#e9f6ee;color:var(--ok);}
+  .choice-btn.wrong{border-color:var(--bad);background:#fbeceb;color:var(--bad);}
+  .feedback{min-height:24px;font-weight:600;font-family:'Kanit',sans-serif;font-size:15px;}
+  .feedback.ok{color:var(--ok);}
+  .feedback.bad{color:var(--bad);}
+  .next-btn{
+    font-family:'Kanit',sans-serif;font-weight:700;font-size:15px;
+    background:var(--ink);color:#fff;border:none;border-radius:10px;padding:10px 22px;cursor:pointer;
+    display:none;
+  }
+  .timer-bar{width:100%;max-width:280px;height:6px;background:var(--line);border-radius:99px;overflow:hidden;}
+  .timer-bar-fill{height:100%;background:var(--ink);width:100%;transition:width .1s linear;}
+
+  .result-box{text-align:center;padding:20px 0;}
+  .result-box .score{font-family:'Kanit',sans-serif;font-weight:800;font-size:44px;margin:6px 0;}
+  .result-box .pass{color:var(--ok);}
+  .result-box .fail{color:var(--bad);}
+  .restart-btn{
+    font-family:'Kanit',sans-serif;font-weight:700;
+    background:var(--ink);color:#fff;border:none;border-radius:10px;padding:11px 24px;cursor:pointer;margin-top:12px;
+  }
+
+  /* real-looking traffic signal for level 3 exam */
+  .exam-signal{
+    background:var(--steel);border-radius:18px;padding:16px 14px;width:82px;
+    display:flex;flex-direction:column;gap:14px;align-items:center;margin:0 auto 6px;
+    box-shadow:0 12px 26px -10px #00000060, inset 0 0 0 1px #ffffff14;
+  }
+  .exam-signal .lamp{width:50px;height:50px;border-radius:50%;background:#00000055;box-shadow:inset 0 2px 5px #00000070;}
+
+  footer.foot{max-width:920px;margin:26px auto 0;padding:16px 20px 0;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .progress-note{color:var(--ink-soft);font-size:13px;}
+  .reset-btn{
+    font-family:'Sarabun',sans-serif;font-size:13px;color:var(--ink-soft);background:none;border:1px solid var(--line);
+    border-radius:8px;padding:7px 12px;cursor:pointer;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;animation:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="signal" id="heroSignal" aria-hidden="true">
+      <div class="lamp" id="heroLampR"></div>
+      <div class="lamp" id="heroLampY"></div>
+      <div class="lamp" id="heroLampG"></div>
+    </div>
+    <div class="hero-text">
+      <p class="eyebrow">สื่อฝึกจำสี · แดง · เหลือง · เขียว</p>
+      <h1 class="title">ฝึกจำสี ทีละด่าน</h1>
+      <p class="subtitle">ออกแบบมาเพื่อฝึกจดจำสีแดง เหลือง เขียว และโทนย่อยของแต่ละสี ไล่ระดับจากง่ายไปยาก โดยใช้โทนสีใกล้เคียงกับที่ใช้ในการทดสอบสายตาสำหรับสอบใบขับขี่</p>
+    </div>
+  </div>
+</header>
+
+<nav class="stages">
+  <button class="stage-btn active" data-stage="1"><span class="num">1</span> ด่าน 1 · รู้จักสีพื้นฐาน</button>
+  <button class="stage-btn" data-stage="2"><span class="num">2</span> ด่าน 2 · หลายโทนของสี</button>
+  <button class="stage-btn" data-stage="3"><span class="num">3</span> ด่าน 3 · แบบทดสอบเสมือนสอบใบขับขี่</button>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ STAGE 1 ============ -->
+<section class="stage active" id="stage1">
+  <div class="stage-head">
+    <h2>รู้จักสีพื้นฐาน 3 สี</h2>
+    <p>เริ่มจากสีหลักที่ใช้ในสัญญาณไฟจราจร กดปุ่ม “ฟังชื่อสี” เพื่อฟังเสียงประกอบการจำ แล้วลองทำแบบทดสอบสั้น ๆ ด้านล่าง</p>
+  </div>
+
+  <div class="basic-grid" id="basicGrid"></div>
+
+  <div class="quiz-panel">
+    <h3>แบบทดสอบด่าน 1</h3>
+    <div class="quiz-meta"><span id="s1-progress">ข้อ 1 / 6</span><span id="s1-score">ถูก 0 ข้อ</span></div>
+    <div class="quiz-stage" id="s1-quiz"></div>
+  </div>
+</section>
+
+<!-- ============ STAGE 2 ============ -->
+<section class="stage" id="stage2">
+  <div class="stage-head">
+    <h2>หลายโทนของแต่ละสี</h2>
+    <p>ในชีวิตจริงสีแต่ละสีมีหลายเฉด ลองดูโทนย่อยของแดง เหลือง เขียว แล้วฝึกจัดกลุ่มว่าโทนไหนอยู่ในตระกูลสีอะไร</p>
+  </div>
+
+  <div id="toneGroups"></div>
+
+  <div class="quiz-panel">
+    <h3>เกมจัดกลุ่มสี</h3>
+    <div class="quiz-meta"><span id="s2-progress">ข้อ 1 / 10</span><span id="s2-score">ถูก 0 ข้อ</span></div>
+    <div class="quiz-stage" id="s2-quiz"></div>
+  </div>
+</section>
+
+<!-- ============ STAGE 3 ============ -->
+<section class="stage" id="stage3">
+  <div class="stage-head">
+    <h2>แบบทดสอบเสมือนสอบใบขับขี่</h2>
+    <p>จำลองการทดสอบตาบอดสีแบบที่ใช้ในสนามสอบใบขับขี่: ไฟจะติดแบบสุ่มตำแหน่ง มีเวลาจำกัดต่อข้อ ต้องตอบให้ถูกอย่างน้อย 8 ใน 10 ข้อจึงจะ “ผ่าน”</p>
+  </div>
+
+  <div class="quiz-panel">
+    <div class="quiz-meta"><span id="s3-progress">ข้อ 1 / 10</span><span id="s3-score">ถูก 0 ข้อ</span></div>
+    <div class="quiz-stage" id="s3-quiz"></div>
+  </div>
+</section>
+
+</div>
+
+<footer class="foot">
+  <span class="progress-note" id="progressNote">ความคืบหน้าจะถูกบันทึกไว้ในเบราว์เซอร์นี้โดยอัตโนมัติ</span>
+  <button class="reset-btn" id="resetBtn">ล้างคะแนนทั้งหมด</button>
+</footer>
+
+<script>
+/* ---------------- DATA ---------------- */
+const BASIC = [
+  {key:'red',    th:'แดง',    en:'Red',    hex:'#e2001a'},
+  {key:'yellow', th:'เหลือง', en:'Yellow', hex:'#ffc72c'},
+  {key:'green',  th:'เขียว',  en:'Green',  hex:'#009444'},
+];
+
+const TONES = {
+  red: [
+    {th:'แดงสด',        hex:'#e2001a'},
+    {th:'แดงเลือดหมู',   hex:'#7a0c2e'},
+    {th:'แดงอิฐ',        hex:'#b23a2e'},
+    {th:'แดงส้ม',        hex:'#e4572e'},
+  ],
+  yellow: [
+    {th:'เหลืองสด',      hex:'#ffd400'},
+    {th:'เหลืองทอง',     hex:'#ffc72c'},
+    {th:'เหลืองมัสตาร์ด', hex:'#c9a227'},
+    {th:'เหลืองนวล',     hex:'#f5e6a8'},
+  ],
+  green: [
+    {th:'เขียวสด',       hex:'#009444'},
+    {th:'เขียวเข้ม',      hex:'#1b5e3a'},
+    {th:'เขียวใบไม้',     hex:'#4caf50'},
+    {th:'เขียวมะกอก',     hex:'#6b8e23'},
+  ],
+};
+
+const FAMILY_TH = {red:'แดง', yellow:'เหลือง', green:'เขียว'};
+
+/* ---------------- STORAGE ---------------- */
+const STORE_KEY = 'colorlearn_progress_v1';
+function loadProgress(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {s1done:false,s2done:false,s3best:0}; }
+  catch(e){ return {s1done:false,s2done:false,s3best:0}; }
+}
+function saveProgress(p){ localStorage.setItem(STORE_KEY, JSON.stringify(p)); }
+let progress = loadProgress();
+
+function markDone(stageNum){
+  const btn = document.querySelector('.stage-btn[data-stage="'+stageNum+'"]');
+  if(btn) btn.classList.add('done');
+}
+if(progress.s1done) markDone(1);
+if(progress.s2done) markDone(2);
+
+/* ---------------- SPEECH ---------------- */
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  const u = new SpeechSynthesisUtterance('สี' + text);
+  u.lang = 'th-TH';
+  u.rate = 0.9;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(u);
+}
+
+/* ---------------- NAV ---------------- */
+document.querySelectorAll('.stage-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.stage-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.stage').forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('stage'+btn.dataset.stage).classList.add('active');
+  });
+});
+
+/* ---------------- HERO SIGNAL ANIMATION ---------------- */
+(function heroCycle(){
+  const lamps = [document.getElementById('heroLampR'), document.getElementById('heroLampY'), document.getElementById('heroLampG')];
+  const classes = ['on-red','on-yellow','on-green'];
+  let i = 0;
+  function step(){
+    lamps.forEach((l,idx)=>l.classList.toggle(classes[idx], idx===i));
+    i = (i+1)%3;
+  }
+  step();
+  setInterval(step, 1400);
+})();
+
+/* ---------------- STAGE 1: basic cards ---------------- */
+const basicGrid = document.getElementById('basicGrid');
+BASIC.forEach(c=>{
+  const card = document.createElement('div');
+  card.className='basic-card';
+  card.innerHTML = `
+    <div class="swatch" style="background:${c.hex}"></div>
+    <div class="info">
+      <p class="name">${c.th}</p>
+      <p class="en">${c.en}</p>
+      <button class="speak-btn" type="button">🔊 ฟังชื่อสี</button>
+    </div>`;
+  card.querySelector('.speak-btn').addEventListener('click', ()=>speak(c.th));
+  basicGrid.appendChild(card);
+});
+
+/* ---------------- Generic quiz engine ---------------- */
+function shuffle(arr){ return arr.map(v=>[Math.random(),v]).sort((a,b)=>a[0]-b[0]).map(v=>v[1]); }
+function pick(arr,n){ return shuffle(arr).slice(0,n); }
+
+/* ---- Stage 1 quiz: swatch -> pick correct basic name ---- */
+function buildS1Questions(){
+  const qs = [];
+  for(let i=0;i<6;i++){
+    const correct = BASIC[Math.floor(Math.random()*3)];
+    const distractors = shuffle(BASIC.filter(c=>c.key!==correct.key));
+    qs.push({hex:correct.hex, answer:correct.th, choices: shuffle([correct.th, distractors[0].th, distractors[1].th])});
+  }
+  return qs;
+}
+let s1 = {questions:buildS1Questions(), idx:0, score:0};
+
+function renderS1(){
+  const q = s1.questions[s1.idx];
+  document.getElementById('s1-progress').textContent = `ข้อ ${s1.idx+1} / ${s1.questions.length}`;
+  document.getElementById('s1-score').textContent = `ถูก ${s1.score} ข้อ`;
+  const el = document.getElementById('s1-quiz');
+  el.innerHTML = `
+    <div class="quiz-swatch" style="background:${q.hex}"></div>
+    <div class="choices">${q.choices.map(c=>`<button class="choice-btn" data-val="${c}">${c}</button>`).join('')}</div>
+    <div class="feedback" id="s1-feedback"></div>
+    <button class="next-btn" id="s1-next">ข้อถัดไป →</button>
+  `;
+  el.querySelectorAll('.choice-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      el.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+      const fb = document.getElementById('s1-feedback');
+      if(btn.dataset.val===q.answer){
+        btn.classList.add('correct'); s1.score++;
+        fb.textContent='ถูกต้อง! นี่คือสี'+q.answer; fb.className='feedback ok';
+      } else {
+        btn.classList.add('wrong'); fb.textContent='ยังไม่ถูก — สีนี้คือ'+q.answer; fb.className='feedback bad';
+        el.querySelectorAll('.choice-btn').forEach(b=>{ if(b.dataset.val===q.answer) b.classList.add('correct'); });
+      }
+      document.getElementById('s1-score').textContent = `ถูก ${s1.score} ข้อ`;
+      const nextBtn = document.getElementById('s1-next');
+      nextBtn.style.display='inline-block';
+      nextBtn.onclick = ()=>{
+        s1.idx++;
+        if(s1.idx < s1.questions.length){ renderS1(); }
+        else{
+          progress.s1done = true; saveProgress(progress); markDone(1);
+          el.innerHTML = `<div class="result-box">
+            <p>คะแนนด่าน 1</p>
+            <p class="score ${s1.score>=5?'pass':'fail'}">${s1.score} / ${s1.questions.length}</p>
+            <button class="restart-btn" id="s1-restart">ทำใหม่อีกครั้ง</button>
+          </div>`;
+          document.getElementById('s1-restart').onclick = ()=>{ s1 = {questions:buildS1Questions(), idx:0, score:0}; renderS1(); };
+        }
+      };
+    });
+  });
+}
+renderS1();
+
+/* ---------------- STAGE 2: tone groups + grouping game ---------------- */
+const toneGroupsEl = document.getElementById('toneGroups');
+Object.keys(TONES).forEach(fam=>{
+  const wrap = document.createElement('div');
+  wrap.className='tone-group';
+  wrap.innerHTML = `<h3><span class="dot" style="background:${BASIC.find(b=>b.key===fam).hex}"></span> ตระกูลสี${FAMILY_TH[fam]}</h3>
+    <div class="tone-grid">${TONES[fam].map(t=>`
+      <div class="tone-card">
+        <div class="swatch" style="background:${t.hex}"></div>
+        <div class="label">${t.th}</div>
+      </div>`).join('')}</div>`;
+  toneGroupsEl.appendChild(wrap);
+});
+
+function buildS2Questions(){
+  const all = [];
+  Object.keys(TONES).forEach(fam=> TONES[fam].forEach(t=> all.push({...t, fam})));
+  return pick(all, 10);
+}
+let s2 = {questions:buildS2Questions(), idx:0, score:0};
+
+function renderS2(){
+  const q = s2.questions[s2.idx];
+  document.getElementById('s2-progress').textContent = `ข้อ ${s2.idx+1} / ${s2.questions.length}`;
+  document.getElementById('s2-score').textContent = `ถูก ${s2.score} ข้อ`;
+  const el = document.getElementById('s2-quiz');
+  el.innerHTML = `
+    <p style="color:var(--ink-soft);font-size:13.5px;margin:0;">โทนสีนี้อยู่ในตระกูลสีอะไร?</p>
+    <div class="quiz-swatch" style="background:${q.hex}"></div>
+    <p style="font-family:'Kanit';font-weight:600;margin:-8px 0 0;">${q.th}</p>
+    <div class="choices">
+      <button class="choice-btn" data-val="red">แดง</button>
+      <button class="choice-btn" data-val="yellow">เหลือง</button>
+      <button class="choice-btn" data-val="green">เขียว</button>
+    </div>
+    <div class="feedback" id="s2-feedback"></div>
+    <button class="next-btn" id="s2-next">ข้อถัดไป →</button>
+  `;
+  el.querySelectorAll('.choice-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      el.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+      const fb = document.getElementById('s2-feedback');
+      if(btn.dataset.val===q.fam){
+        btn.classList.add('correct'); s2.score++;
+        fb.textContent='ถูกต้อง!'; fb.className='feedback ok';
+      } else {
+        btn.classList.add('wrong'); fb.textContent='ยังไม่ถูก — โทนนี้อยู่ในตระกูลสี'+FAMILY_TH[q.fam]; fb.className='feedback bad';
+        el.querySelector(`[data-val="${q.fam}"]`).classList.add('correct');
+      }
+      document.getElementById('s2-score').textContent = `ถูก ${s2.score} ข้อ`;
+      const nextBtn = document.getElementById('s2-next');
+      nextBtn.style.display='inline-block';
+      nextBtn.onclick = ()=>{
+        s2.idx++;
+        if(s2.idx < s2.questions.length){ renderS2(); }
+        else{
+          progress.s2done = true; saveProgress(progress); markDone(2);
+          el.innerHTML = `<div class="result-box">
+            <p>คะแนนด่าน 2</p>
+            <p class="score ${s2.score>=8?'pass':'fail'}">${s2.score} / ${s2.questions.length}</p>
+            <button class="restart-btn" id="s2-restart">ทำใหม่อีกครั้ง</button>
+          </div>`;
+          document.getElementById('s2-restart').onclick = ()=>{ s2 = {questions:buildS2Questions(), idx:0, score:0}; renderS2(); };
+        }
+      };
+    });
+  });
+}
+renderS2();
+
+/* ---------------- STAGE 3: exam-style timed test ---------------- */
+function buildS3Questions(){
+  const all = [];
+  BASIC.forEach(b=> all.push({th:b.th, hex:b.hex, fam:b.key}));
+  Object.keys(TONES).forEach(fam=> TONES[fam].forEach(t=> all.push({th:t.th, hex:t.hex, fam})));
+  // 10 questions, weighted toward tones for difficulty, ensure mix of all 3 families
+  return pick(all, 10);
+}
+let s3 = {questions:buildS3Questions(), idx:0, score:0, timer:null, timeLeft:5};
+const S3_TIME = 5; // seconds per question
+
+function renderS3(){
+  const q = s3.questions[s3.idx];
+  document.getElementById('s3-progress').textContent = `ข้อ ${s3.idx+1} / ${s3.questions.length}`;
+  document.getElementById('s3-score').textContent = `ถูก ${s3.score} ข้อ`;
+  const el = document.getElementById('s3-quiz');
+  // random lamp position: 0=top,1=mid,2=bottom
+  const pos = Math.floor(Math.random()*3);
+  const lampHtml = [0,1,2].map(i=>{
+    const on = i===pos ? `background:${q.hex};box-shadow:0 0 20px 4px ${q.hex}` : '';
+    return `<div class="lamp" style="${on}"></div>`;
+  }).join('');
+  el.innerHTML = `
+    <p style="color:var(--ink-soft);font-size:13.5px;margin:0;">ไฟดวงที่สว่างคือสีอะไร?</p>
+    <div class="exam-signal">${lampHtml}</div>
+    <div class="timer-bar"><div class="timer-bar-fill" id="s3-timerfill"></div></div>
+    <div class="choices">
+      <button class="choice-btn" data-val="red">แดง</button>
+      <button class="choice-btn" data-val="yellow">เหลือง</button>
+      <button class="choice-btn" data-val="green">เขียว</button>
+    </div>
+    <div class="feedback" id="s3-feedback"></div>
+    <button class="next-btn" id="s3-next">ข้อถัดไป →</button>
+  `;
+  let timeLeft = S3_TIME*10;
+  const fill = document.getElementById('s3-timerfill');
+  clearInterval(s3.timer);
+  s3.timer = setInterval(()=>{
+    timeLeft--;
+    fill.style.width = (timeLeft/(S3_TIME*10)*100)+'%';
+    if(timeLeft<=0){
+      clearInterval(s3.timer);
+      handleAnswer(null);
+    }
+  }, 100);
+
+  function handleAnswer(chosenVal){
+    clearInterval(s3.timer);
+    el.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+    const fb = document.getElementById('s3-feedback');
+    if(chosenVal===q.fam){
+      s3.score++;
+      fb.textContent='ถูกต้อง!'; fb.className='feedback ok';
+      el.querySelector(`[data-val="${q.fam}"]`).classList.add('correct');
+    } else {
+      fb.textContent = chosenVal ? 'ยังไม่ถูก — ไฟดวงนี้คือสี'+FAMILY_TH[q.fam] : 'หมดเวลา! ไฟดวงนี้คือสี'+FAMILY_TH[q.fam];
+      fb.className='feedback bad';
+      if(chosenVal){ el.querySelector(`[data-val="${chosenVal}"]`).classList.add('wrong'); }
+      el.querySelector(`[data-val="${q.fam}"]`).classList.add('correct');
+    }
+    document.getElementById('s3-score').textContent = `ถูก ${s3.score} ข้อ`;
+    const nextBtn = document.getElementById('s3-next');
+    nextBtn.style.display='inline-block';
+    nextBtn.onclick = ()=>{
+      s3.idx++;
+      if(s3.idx < s3.questions.length){ renderS3(); }
+      else{
+        if(s3.score > progress.s3best){ progress.s3best = s3.score; saveProgress(progress); }
+        markDone(3);
+        const passed = s3.score>=8;
+        el.innerHTML = `<div class="result-box">
+          <p>ผลการทดสอบด่าน 3</p>
+          <p class="score ${passed?'pass':'fail'}">${s3.score} / ${s3.questions.length}</p>
+          <p style="font-family:'Kanit';font-weight:700;color:${passed?'var(--ok)':'var(--bad)'}">${passed?'ผ่านเกณฑ์ 🎉':'ยังไม่ผ่านเกณฑ์ — ลองอีกครั้ง'}</p>
+          <p class="progress-note">คะแนนสูงสุดที่เคยทำได้: ${progress.s3best} / 10</p>
+          <button class="restart-btn" id="s3-restart">ทำใหม่อีกครั้ง</button>
+        </div>`;
+        document.getElementById('s3-restart').onclick = ()=>{ s3 = {questions:buildS3Questions(), idx:0, score:0}; renderS3(); };
+      }
+    };
+  }
+
+  el.querySelectorAll('.choice-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=> handleAnswer(btn.dataset.val));
+  });
+}
+renderS3();
+
+/* ---------------- RESET ---------------- */
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(!confirm('ล้างความคืบหน้าและคะแนนทั้งหมด?')) return;
+  progress = {s1done:false,s2done:false,s3best:0};
+  saveProgress(progress);
+  document.querySelectorAll('.stage-btn').forEach(b=>b.classList.remove('done'));
+  s1 = {questions:buildS1Questions(), idx:0, score:0}; renderS1();
+  s2 = {questions:buildS2Questions(), idx:0, score:0}; renderS2();
+  s3 = {questions:buildS3Questions(), idx:0, score:0}; renderS3();
+});
+</script>
+</body>
+</html>
